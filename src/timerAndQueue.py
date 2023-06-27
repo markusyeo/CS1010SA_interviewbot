@@ -5,7 +5,7 @@ import time
 from datetime import timedelta as td
 
 class timerAndQueue:
-    def __init__(self, client, bot, timeLimit=240):
+    def __init__(self, client, bot, timeLimit=300):
         self.client = client
         self.bot = bot
         self.timerQueue = {}

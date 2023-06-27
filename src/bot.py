@@ -79,31 +79,38 @@ class Bot:
         await self.client.set_state(message.from_user.id, aclient.questionState_1, message.chat.id)
         msg = emoji.emojize('The first question is:\n' +
                             '*Please give a short introduction of yourself and why you want to be a tutor.*\n\n'+
-                            'You have 4 minutes in total. Please submit a video of no longer than 2 minutes.')
+                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
         msg += warningMessage
         return msg
 
     async def sendQuestion_2(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_2, message.chat.id)
-        msg = emoji.emojize('The second question is:\n')
+        msg = emoji.emojize('The second question is:\n'+
+                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
         msg += warningMessage
         return msg
 
     async def sendQuestion_3(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_3, message.chat.id)
-        msg = emoji.emojize('The third question is:\n')
+        msg = emoji.emojize('The third question is:\n'+
+                            ''+
+                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
         msg += warningMessage
         return msg
 
     async def sendQuestion_4(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_4, message.chat.id)
-        msg = emoji.emojize('The fourth question is:\n')
+        msg = emoji.emojize('The fourth question is:\n'+
+                            ''+
+                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
         msg += warningMessage
         return msg
 
     async def sendQuestion_5(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_5, message.chat.id)
-        msg = emoji.emojize('The fifth question is:\n')
+        msg = emoji.emojize('The fifth question is:\n'+
+                            ''+
+                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
         msg += warningMessage
         return msg
         

@@ -4,6 +4,8 @@ from env import HEADTA
 import asyncio
 from src.bot import Bot
 
+warningMessage = emoji.emojize('\n\n:spiral_notepad: Ample time has been provided for you to think through your response, record and upload it. It is your responsibility to submit it on time.')
+
 def run_tele_bot(bot: Bot):
 
     @bot.client.message_handler(commands=['poll'])
@@ -125,26 +127,27 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
     @bot.client.message_handler(commands=['practice'])
     async def start_practice(message):
         msg = emoji.emojize(':robot: Practice question :robot:' +
-                            ': This is a practice question, you have 2 minutes to answer this question.' +
-                            'Your video should be no longer than 1 minute or it will be ignored for evaluation.')
+                            ': This is a practice question, you have 5 minutes to answer this question.' +
+                            'Your video should be no longer than 2 minute or it will be ignored for evaluation.')
+        msg += warningMessage
         
         # Sets the mode to receiving practice response
         await bot.client.set_state(message.from_user.id, aclient.questionState_practice, message.chat.id)
         await bot.client.reply_to(message, msg, parse_mode = "Markdown")
-        await bot.client.timerAndQueue.mainFunction(message)
+        await bot.client.timerAndQueue.mainFunction(message, 'practice')
 
     # Recurring Practice qeustion
     # I would like a feature where the use is able to practice
     # and get used to the bot before starting the actual interview, this way the user would be comfortable
     @bot.client.message_handler(state=aclient.questionState_practice, content_types=['video','video_note'])
     async def getQuestionPracticeQuestionReply(message):
-        await bot.processQuestionResponse(message, isPractice = True)
+        await bot.processQuestionResponse(message, 'practice')
 
     # Just duplicating it for non video related due to some funky behaviour
     # of the library
     @bot.client.message_handler(state=aclient.questionState_practice)
     async def getQuestionPracticeQuestionReply(message):
-        await bot.processQuestionResponse(message, isPractice = True)
+        await bot.processQuestionResponse(message, 'practice')
 
     ######################
     #### Admin Stuff #####
