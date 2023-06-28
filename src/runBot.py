@@ -126,13 +126,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
 
     @bot.client.message_handler(commands=['practice'])
     async def start_practice(message):
-        msg = emoji.emojize(':robot: Practice question :robot:' +
-                            ': This is a practice question, you have 5 minutes to answer this question.' +
-                            'Your video should be no longer than 2 minute or it will be ignored for evaluation.')
-        msg += warningMessage
-        
-        # Sets the mode to receiving practice response
-        await bot.client.set_state(message.from_user.id, aclient.questionState_practice, message.chat.id)
+        msg = await bot.sendQuestion_practice(message)
         await bot.client.reply_to(message, msg, parse_mode = "Markdown")
         await bot.client.timerAndQueue.mainFunction(message, 'practice')
 

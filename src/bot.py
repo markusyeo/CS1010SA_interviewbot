@@ -2,13 +2,14 @@ from telebot import asyncio_filters
 
 import asyncio
 from env import TOKEN
-from env import HEADTA
 from env import FORWARD_CHAT
+from env import question_1, question_2, question_3, question_4, question_5, question_practice
 import emoji
 from src.client import aclient
 from src.timerAndQueue import timerAndQueue
 from src.acknowledgementHelper import acknowledgementHelper
 
+questionTimeLimitMessage = '\n\nYou have 5 minutes in total. Please submit a video of no longer than 2 minutes.'
 warningMessage = emoji.emojize('\n\n:spiral_notepad: Ample time has been provided for you to think through your response, record and upload it. It is your responsibility to submit it on time.')
 
 class Bot:
@@ -75,43 +76,38 @@ class Bot:
         if questionNumber != 6:
             await self.client.timerAndQueue.mainFunction(message, questionNumber+1)
 
+    async def sendQuestion_practice(self, message):
+        await self.client.set_state(message.from_user.id, aclient.questionState_practice, message.chat.id)
+        msg = emoji.emojize(':robot: Practice question :robot:' +
+                            ': This is a practice question, you have 3 minutes to answer this question.\n' +
+                            f'*{question_practice}*:clown_face:\n'+
+                            'Your video should be no longer than 1 minute or it will be ignored for evaluation.'
+                            + warningMessage)
+        return msg
+
     async def sendQuestion_1(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_1, message.chat.id)
-        msg = emoji.emojize('The first question is:\n' +
-                            '*Please give a short introduction of yourself and why you want to be a tutor.*\n\n'+
-                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
-        msg += warningMessage
+        msg = f'The first question is:\n*{question_1}*{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_2(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_2, message.chat.id)
-        msg = emoji.emojize('The second question is:\n'+
-                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
-        msg += warningMessage
+        msg = f'The second question is:\n*{question_2}*{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_3(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_3, message.chat.id)
-        msg = emoji.emojize('The third question is:\n'+
-                            ''+
-                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
-        msg += warningMessage
+        msg = f'The third question is:\n*{question_3}*{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_4(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_4, message.chat.id)
-        msg = emoji.emojize('The fourth question is:\n'+
-                            ''+
-                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
-        msg += warningMessage
+        msg = f'The fourth question is:\n*{question_4}*{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_5(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_5, message.chat.id)
-        msg = emoji.emojize('The fifth question is:\n'+
-                            ''+
-                            'You have 5 minutes in total. Please submit a video of no longer than 2 minutes.')
-        msg += warningMessage
+        msg = f'The fifth question is:\n*{question_5}*{questionTimeLimitMessage}{warningMessage}'
         return msg
         
     async def interview_over(self, message):

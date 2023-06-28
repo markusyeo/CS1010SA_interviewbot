@@ -3,6 +3,8 @@ import emoji
 import logging
 import time
 from datetime import timedelta as td
+from env import question_1_time, question_2_time, question_3_time, question_4_time, question_5_time, question_practice_time
+from env import question_1_video_time, question_2_video_time, question_3_video_time, question_4_video_time, question_5_video_time, question_practice_video_time
 
 class timerAndQueue:
     def __init__(self, client, bot, timeLimit=300):
@@ -16,18 +18,37 @@ class timerAndQueue:
         logging.info(f"{message.from_user.full_name} started question 1 at {start_time}")
         await self.addToTimerQueue(message, start_time, nextQuestionNumber)
 
+    async def getQuestionTimes(self, questionNumber:int):
+        match questionNumber:
+            case 'practice':
+                return question_practice_time, question_practice_video_time
+            case 2:
+                return question_1_time, question_1_video_time
+            case 3:
+                return question_2_time, question_2_video_time
+            case 4:
+                return question_3_time, question_3_video_time
+            case 5:
+                return question_4_time, question_4_video_time
+            case 6:
+                return question_5_time, question_5_video_time
+
     async def addToTimerQueue(self, message, startTime, nextQuestionNumber):
         chat_id = message.chat.id
-        timerMessage = await self.sendTimerMessage(chat_id)
+        questionTimeLimit, questionVideoTimeLimit = await self.getQuestionTimes(nextQuestionNumber)
+        timerMessage = await self.sendTimerMessage(chat_id, questionTimeLimit * 60)
         self.timerQueue[(message.from_user.id, message.chat.id)] = {'time': startTime,
-                                   'remindOneMinute': False,
-                                   'chat_id': chat_id,
-                                   'message_id': timerMessage.id,
-                                   'nextQuestionNumber': nextQuestionNumber,
-                                   'message': message}
+                                        'timeLimit': questionTimeLimit * 60,
+                                        'videoTimeLimit': questionVideoTimeLimit * 60,
+                                        'remindOneMinute': False,
+                                        'pleaseRecordNow': False,
+                                        'chat_id': chat_id,
+                                        'message_id': timerMessage.id,
+                                        'nextQuestionNumber': nextQuestionNumber,
+                                        'message': message}
 
-    async def sendTimerMessage(self, chat_id):
-        message = await self.client.send_message(chat_id, self.formatTime(self.timeLimit))
+    async def sendTimerMessage(self, chat_id, questionTimeLimit):
+        message = await self.client.send_message(chat_id, self.formatTime(questionTimeLimit))
         return message
     
     async def pollQueue(self):
@@ -41,16 +62,23 @@ class timerAndQueue:
         questionStartTime = value['time']
         chat_id = value['chat_id']
         message_id = value['message_id']
-        isOneMinuteLeft = value['remindOneMinute']
-
-        if questionStartTime + self.timeLimit < currentTime + 60 and isOneMinuteLeft == False:
-            await self.remindOneMinuteLeft(user_id)
-        if questionStartTime + self.timeLimit < currentTime:
+        timeLimit = value['timeLimit'] + questionStartTime
+        if not value['remindOneMinute']:
+            await self.remindOneMinuteLeft(user_id, timeLimit, currentTime)
+        if not value['pleaseRecordNow']:
+            await self.isTimeToStartVideo(user_id, currentTime, timeLimit)
+        if timeLimit < currentTime:
             await self.deleteTimer(user_id, value)
         else:
-            newTimeLeft = questionStartTime + self.timeLimit - currentTime
-            await self.updateTimer(newTimeLeft, chat_id, message_id, isOneMinuteLeft)
+            newTimeLeft = timeLimit - currentTime
+            await self.updateTimer(newTimeLeft, chat_id, message_id, value['remindOneMinute'])
         
+    async def isTimeToStartVideo(self, user_id, currentTime, timeLimit):
+        if timeLimit - self.timerQueue[user_id]['videoTimeLimit'] <  currentTime + 60:
+            msg = emoji.emojize(':timer_clock::red_exclamation_mark:*Please start recording now*')
+            await self.client.send_message(self.timerQueue[user_id]['chat_id'], msg, parse_mode='Markdown')
+            self.timerQueue[user_id]['pleaseRecordNow'] = True
+
     async def timesUpGoToNextState(self, user_id, value):
         nextQuestionNumber = value['nextQuestionNumber']
         nextState = await self.client.getQuestionState(nextQuestionNumber)
@@ -63,8 +91,9 @@ class timerAndQueue:
         await self.client.edit_message_text(msg, value['chat_id'], value['message_id'])
         await self.timesUpGoToNextState(user_id, value)
 
-    async def remindOneMinuteLeft(self, user_id):
-        self.timerQueue[user_id]['remindOneMinute'] = True
+    async def remindOneMinuteLeft(self, user_id, timeLimit, currentTime):
+        if timeLimit < currentTime + 60:
+            self.timerQueue[user_id]['remindOneMinute'] = True
         # await self.client.send_message(value['chat_id'], msg)
         
     async def updateTimer(self, newTimeLeft, chat_id, message_id, isOneMinuteLeft):
