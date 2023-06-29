@@ -103,8 +103,11 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
     @bot.client.message_handler(commands=['acknowledge'])
     async def acknowledge_command(message):
         # Extract the user input
-        user_input = message.text.split('/acknowledge ')[1]
-
+        try:
+            user_input = message.text.split('/acknowledge ')[1]
+        except:
+            await bot.sendAcknowledgementFormat(message)
+            return
         # Process the user input
         # You can perform any logic or actions with the user input here
         # For example, you can send a response to the user

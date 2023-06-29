@@ -70,3 +70,7 @@ class Bot:
     async def sendAcknowledgementFailure(self, message):
         msg = emoji.emojize('Your acknowledgement key is invalid. Please try again if your key is suppose to be working, or contact @MarkyYeo if you think there is a mistake.')
         await self.client.reply_to(message, msg, parse_mode = "Markdown")
+
+    async def sendAcknowledgementFormat(self, message):
+        msg = emoji.emojize('Please send your acknowledgement key in the following format: /acknowledge <key>')
+        await self.client.reply_to(message, msg, parse_mode = "Markdown")
