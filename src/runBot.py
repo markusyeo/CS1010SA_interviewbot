@@ -31,7 +31,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
         await bot.client.reply_to(message, start_msg, parse_mode = "Markdown")
 
     @bot.client.message_handler(commands=['help'])
-    async def help(message)
+    async def help(message):
         await bot.client.reply_to(message, 
                             emoji.emojize(':information:Help section\n' +
                             '- /start to read the instructions for the interview\n' + 
