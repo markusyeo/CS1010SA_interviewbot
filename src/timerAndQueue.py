@@ -32,6 +32,7 @@ class timerAndQueue:
                                         'pleaseRecordNow': False,
                                         'chat_id': chat_id,
                                         'message_id': timerMessage.id,
+                                        'questionNumber': questionNumber,
                                         'nextQuestionNumber': nextQuestionNumber,
                                         'message': message,
                                         'isCompleted': False}
@@ -79,7 +80,7 @@ class timerAndQueue:
 
     async def deleteTimer(self, user_id, value):
         del self.timerQueue[user_id]
-        msg = emoji.emojize(f':timer_clock::red_exclamation_mark: Time\'s up for question {value["nextQuestionNumber"]-1}! :red_exclamation_mark::timer_clock:')
+        msg = emoji.emojize(f':timer_clock::red_exclamation_mark: Time\'s up for question {value["questionNumber"]}! :red_exclamation_mark::timer_clock:')
         await self.client.edit_message_text(msg, value['chat_id'], value['message_id'])
         await self.timesUpGoToNextState(user_id, value)
 

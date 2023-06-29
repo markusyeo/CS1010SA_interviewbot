@@ -18,9 +18,11 @@ def run_tele_bot(bot: Bot):
         start_msg = emoji.emojize(f'''
 :robot: Welcome to CS1010S/A New Tutor interview!
 Please read the following instructions and acknowledge them before beginning your intereview.
-- You will have 5 minutes for each question including thinking time as well as answering time.
-- After 2 minutes, you will receive a warning message to start recording your video, it is your responsibility to start recording early in order to submit your video on time.
-- If you fail to submit a video after 5 minutes, you will have forefeited that question.\n
+- You might want to have a second device to record your video and upload it to the bot, so you are able to see the questions and the time left.
+- You should not use a telebubble, but upload a video from your phone or computer.
+- The time for each question will include thinking time as well as answering time and some buffer to upload your attempt.
+- When you have only 1 minute more than the video time limit, you will receive a warning message to start recording your video, it is your responsibility to start recording early in order to submit your video on time.
+- If you fail to submit a video after the time limit, you will have forefeited that question.\n
 - You will be given 5 questions in total, and you should ensure that you have at least 30 minutes free to answer all the questions in 1 sitting.
 - Please manage your time wisely, and ensure that you have a suitable internet connection.
 If you are unable to complete the interview now, please come back another time and acknowledge the instructions again.\n
