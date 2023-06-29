@@ -158,7 +158,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
         user_input = message.text.split('/add_key\n')[1]
         listOfKeys = user_input.split('\n')
         for nameAndKey in listOfKeys:
-            name, key = nameAndKey.split(' ')
+            name, key = nameAndKey.split('/')
             hashedKey = bot.acknowledgementHelper.generate_keys(name, key)
             if not hashedKey:
                 msg = emoji.emojize(f'Key already exists for {name}, {key}')
