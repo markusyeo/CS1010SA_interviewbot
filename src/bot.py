@@ -2,7 +2,7 @@ from telebot import asyncio_filters
 
 import asyncio
 from env import TOKEN
-from env import FORWARD_CHAT
+from env import FORWARD_CHAT, PRACTICE_LOGS
 import emoji
 from src.client import aclient
 from src.timerAndQueue import timerAndQueue
@@ -42,7 +42,7 @@ class Bot:
             await self.timerAndQueue.earlyTerminate(message.from_user.id, questionNumber)
             if questionNumber == 'practice':
                 await self.client.delete_state(message.from_user.id, message.chat.id)
-            await self.forwardMessageToHeadTA(message, questionNumber)
+            await self.forwardMessageToLogs(message, questionNumber)
             return True
         else:
             await self.pleaseSendVideo(message)
@@ -51,14 +51,16 @@ class Bot:
     async def deleteState(self, user_id, chat_id):
         await self.client.delete_state(user_id, chat_id)
 
-    async def forwardMessageToHeadTA(self, message, questionNumber):
+    async def forwardMessageToLogs(self, message, questionNumber):
         if questionNumber == 'practice':
             name = message.from_user.username
+            chat_id = PRACTICE_LOGS
         else:
             name = await self.acknowledgementHelper.getName(message.from_user.id)
+            chat_id = FORWARD_CHAT
         msg = f'Recorded a response from {name} for question: {questionNumber}'
-        await self.client.send_message(FORWARD_CHAT, msg, parse_mode = "Markdown")
-        await self.client.forward_message(FORWARD_CHAT, message.chat.id, message.message_id)
+        await self.client.send_message(chat_id, msg, parse_mode = "Markdown")
+        await self.client.forward_message(chat_id, message.chat.id, message.message_id)
 
     async def sendQuestionMessage(self, message, questionNumber, name=None):
         msg = await QuestionHelper.getQuestionMessage(self.client, message, questionNumber)
