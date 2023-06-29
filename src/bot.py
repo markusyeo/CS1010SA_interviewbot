@@ -47,6 +47,9 @@ class Bot:
         else:
             await self.pleaseSendVideo(message)
             return False
+        
+    async def deleteState(self, user_id, chat_id):
+        await self.client.delete_state(user_id, chat_id)
 
     async def forwardMessageToHeadTA(self, message, questionNumber):
         if questionNumber == 'practice':

@@ -187,5 +187,5 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
                 msg = emoji.emojize(f'Key ({key}) does not exist')
             await bot.client.send_message(message.chat.id, msg, parse_mode = "Markdown")
 
-    asyncio.run(bot.client.infinity_polling(timeout = 0.5))
+    asyncio.run(bot.client.infinity_polling(timeout = 0.1))
     # asyncio.run(client.run_webhooks(listen='127.0.0.1'))

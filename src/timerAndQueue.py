@@ -4,6 +4,7 @@ import logging
 import time
 from datetime import timedelta as td
 from src.questionHelper import QuestionHelper
+from src.stateHelper import StateHelper
 
 class timerAndQueue:
     def __init__(self, client, bot, timeLimit=300):
@@ -25,7 +26,7 @@ class timerAndQueue:
             nextQuestionNumber = questionNumber + 1
         else:
             nextQuestionNumber = questionNumber 
-        self.timerQueue[(message.from_user.id, message.chat.id)] = {'time': startTime,
+        self.timerQueue[message.from_user.id] = {'time': startTime,
                                         'timeLimit': questionTimeLimit * 60,
                                         'videoTimeLimit': questionVideoTimeLimit * 60,
                                         'remindOneMinute': False,
@@ -74,14 +75,17 @@ class timerAndQueue:
 
     async def timesUpGoToNextState(self, user_id, value):
         nextQuestionNumber = value['nextQuestionNumber']
-        nextState = await self.client.getQuestionState(nextQuestionNumber)
-        await self.client.set_state(user_id[0], nextState, value['chat_id'])
+        nextState = await StateHelper.getQuestionState(nextQuestionNumber)
+        await self.client.set_state(user_id, nextState, value['chat_id'])
         await self.bot.sendQuestionMessage(value['message'], value['nextQuestionNumber'])
 
     async def deleteTimer(self, user_id, value):
         del self.timerQueue[user_id]
         msg = emoji.emojize(f':timer_clock::red_exclamation_mark: Time\'s up for question {value["questionNumber"]}! :red_exclamation_mark::timer_clock:')
         await self.client.edit_message_text(msg, value['chat_id'], value['message_id'])
+        if value['questionNumber'] == 'practice':
+            await self.bot.deleteState(user_id, value['chat_id'])
+            return
         await self.timesUpGoToNextState(user_id, value)
 
     async def remindOneMinuteLeft(self, user_id, timeLimit, currentTime):
@@ -99,17 +103,18 @@ class timerAndQueue:
         await self.client.edit_message_text(msg, chat_id, message_id)
 
     async def earlyTerminate(self, user_id, questionNumber):
-        chats = list(filter(lambda x: x[0] == user_id, self.timerQueue.keys()))
-        chat_id = self.timerQueue[chats[0]]['chat_id']
-        message_id = self.timerQueue[chats[0]]['message_id']
+        # chats = list(filter(lambda x: x[0] == user_id, self.timerQueue.keys()))
+        chat_id = self.timerQueue[user_id]['chat_id']
+        message_id = self.timerQueue[user_id]['message_id']
         if questionNumber == 'practice':
             msg = 'You have submitted a practice response. To try again, use `/practice`'
+            await self.bot.deleteState(user_id, chat_id)
         else:
             msg = f'We have received your response for question {questionNumber}.'
-            self.timerQueue[chats[0]]['isCompleted'] = True
+            self.timerQueue[user_id]['isCompleted'] = True
         await self.client.send_message(chat_id, msg, parse_mode='Markdown')
         await self.client.edit_message_text(emoji.emojize(f':check_mark_button: Submitted question {questionNumber}!'), chat_id, message_id)
-        del self.timerQueue[chats[0]]
+        del self.timerQueue[user_id]
 
     @staticmethod
     def formatTime(time):
