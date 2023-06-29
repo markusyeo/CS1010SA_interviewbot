@@ -90,27 +90,27 @@ class Bot:
 
     async def sendQuestion_1(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_1, message.chat.id)
-        msg = f'The first question is:\n*{question_1}*{questionTimeLimitMessage}{warningMessage}'
+        msg = f'The first question is:\n{question_1}{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_2(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_2, message.chat.id)
-        msg = f'The second question is:\n*{question_2}*{questionTimeLimitMessage}{warningMessage}'
+        msg = f'The second question is:\n{question_2}{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_3(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_3, message.chat.id)
-        msg = f'The third question is:\n*{question_3}*{questionTimeLimitMessage}{warningMessage}'
+        msg = f'The third question is:\n{question_3}{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_4(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_4, message.chat.id)
-        msg = f'The fourth question is:\n*{question_4}*{questionTimeLimitMessage}{warningMessage}'
+        msg = f'The fourth question is:\n{question_4}{questionTimeLimitMessage}{warningMessage}'
         return msg
 
     async def sendQuestion_5(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_5, message.chat.id)
-        msg = f'The fifth question is:\n*{question_5}*{questionTimeLimitMessage}{warningMessage}'
+        msg = f'The fifth question is:\n{question_5}{questionTimeLimitMessage}{warningMessage}'
         return msg
         
     async def interview_over(self, message):
