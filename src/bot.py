@@ -33,7 +33,7 @@ class Bot:
         return aclient(TOKEN)
 
     async def pleaseSendVideo(self, message):
-        msg = emoji.emojize(':red_exclamation_mark: Please do not send a response other than a video response to this question.')
+        msg = emoji.emojize(':red_exclamation_mark:Please do not send a response other than a video response to this question.')
         await self.client.reply_to(message, msg, parse_mode = "Markdown")
 
     async def processQuestionResponse(self, message, questionNumber):
@@ -42,15 +42,18 @@ class Bot:
             await self.timerAndQueue.earlyTerminate(message.from_user.id, questionNumber)
             if questionNumber == 'practice':
                 await self.client.delete_state(message.from_user.id, message.chat.id)
-            else:
-                await self.forwardMessageToHeadTA(message, questionNumber)
+            await self.forwardMessageToHeadTA(message, questionNumber)
             return True
         else:
             await self.pleaseSendVideo(message)
             return False
 
     async def forwardMessageToHeadTA(self, message, questionNumber):
-        msg = f'Recorded a response from {await self.acknowledgementHelper.getUserId(message.from_user.id)} for question {questionNumber}'
+        if questionNumber == 'practice':
+            name = message.from_user.username
+        else:
+            name = await self.acknowledgementHelper.getUserId(message.from_user.id)
+        msg = f'Recorded a response from {name} for question: {questionNumber}'
         await self.client.send_message(FORWARD_CHAT, msg, parse_mode = "Markdown")
         await self.client.forward_message(FORWARD_CHAT, message.chat.id, message.message_id)
 
@@ -79,8 +82,8 @@ class Bot:
     async def sendQuestion_practice(self, message):
         await self.client.set_state(message.from_user.id, aclient.questionState_practice, message.chat.id)
         msg = emoji.emojize(':robot: Practice question :robot:' +
-                            ': This is a practice question, you have 3 minutes to answer this question.\n' +
-                            f'*{question_practice}*:clown_face:\n'+
+                            ':target:This is a practice question, you have 3 minutes to answer this question.\n' +
+                            f'*{question_practice}*\n\n'+
                             'Your video should be no longer than 1 minute or it will be ignored for evaluation.'
                             + warningMessage)
         return msg
