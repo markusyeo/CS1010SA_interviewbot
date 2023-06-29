@@ -1,50 +1,23 @@
 import logging
 import telebot
 from telebot.async_telebot import AsyncTeleBot
-from telebot.asyncio_handler_backends import State, StatesGroup
-from telebot.asyncio_storage import StateMemoryStorage
-from src.timerAndQueue import timerAndQueue
 from typing import Any, Awaitable, Callable, List, Optional, Union
 from telebot import asyncio_helper
 import asyncio
-import logging
 import traceback
+from src.stateHelper import StateHelper
 logger = logging.getLogger('whatever')
 
-class aclient(AsyncTeleBot, StatesGroup):
-    acknowledgementState = State()
-    questionState_practice = State()
-    questionState_1 = State()
-    questionState_2 = State()
-    questionState_3 = State()
-    questionState_4 = State()
-    questionState_5 = State()
-    questionState_over = State()
+class aclient(AsyncTeleBot):
 
     def __init__(self, TOKEN) -> None:
-        super().__init__(TOKEN, state_storage=StateMemoryStorage())
+        self.states = StateHelper()
+        super().__init__(TOKEN, state_storage=self.states.getStateStorage())
         self.logger = telebot.logger
         telebot.logger.setLevel(logging.DEBUG)
 
     def addTimer(self, timer):
         self.timerAndQueue = timer
-
-    async def getQuestionState(self, questionNumber):
-        match questionNumber:
-            case 'practice':
-                return self.questionState_practice
-            case 1:
-                return self.questionState_1
-            case 2:
-                return self.questionState_2
-            case 3:
-                return self.questionState_3
-            case 4:
-                return self.questionState_4
-            case 5:
-                return self.questionState_5
-            case 6:
-                return self.questionState_over
 
     async def infinity_polling(self, timeout: Optional[int]=20, skip_pending: Optional[bool]=False, request_timeout: Optional[int]=None,
             logger_level: Optional[int]=logging.ERROR, allowed_updates: Optional[List[str]]=None,

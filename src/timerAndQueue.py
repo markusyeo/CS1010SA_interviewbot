@@ -3,8 +3,7 @@ import emoji
 import logging
 import time
 from datetime import timedelta as td
-from env import question_1_time, question_2_time, question_3_time, question_4_time, question_5_time, question_practice_time
-from env import question_1_video_time, question_2_video_time, question_3_video_time, question_4_video_time, question_5_video_time, question_practice_video_time
+from src.questionHelper import QuestionHelper
 
 class timerAndQueue:
     def __init__(self, client, bot, timeLimit=300):
@@ -13,30 +12,19 @@ class timerAndQueue:
         self.timerQueue = {}
         self.timeLimit = timeLimit 
 
-    async def mainFunction(self, message, nextQuestionNumber):
+    async def mainFunction(self, message, questionNumber):
         start_time = time.time()
         logging.info(f"{message.from_user.full_name} started question 1 at {start_time}")
-        await self.addToTimerQueue(message, start_time, nextQuestionNumber)
+        await self.addToTimerQueue(message, start_time, questionNumber)    
 
-    async def getQuestionTimes(self, questionNumber:int):
-        match questionNumber:
-            case 'practice':
-                return question_practice_time, question_practice_video_time
-            case 2:
-                return question_1_time, question_1_video_time
-            case 3:
-                return question_2_time, question_2_video_time
-            case 4:
-                return question_3_time, question_3_video_time
-            case 5:
-                return question_4_time, question_4_video_time
-            case 6:
-                return question_5_time, question_5_video_time
-
-    async def addToTimerQueue(self, message, startTime, nextQuestionNumber):
+    async def addToTimerQueue(self, message, startTime, questionNumber):
         chat_id = message.chat.id
-        questionTimeLimit, questionVideoTimeLimit = await self.getQuestionTimes(nextQuestionNumber)
+        questionTimeLimit, questionVideoTimeLimit = await QuestionHelper.getQuestionTimes(questionNumber)
         timerMessage = await self.sendTimerMessage(chat_id, questionTimeLimit * 60)
+        if type(questionNumber) == int:
+            nextQuestionNumber = questionNumber + 1
+        else:
+            nextQuestionNumber = questionNumber 
         self.timerQueue[(message.from_user.id, message.chat.id)] = {'time': startTime,
                                         'timeLimit': questionTimeLimit * 60,
                                         'videoTimeLimit': questionVideoTimeLimit * 60,
@@ -45,7 +33,8 @@ class timerAndQueue:
                                         'chat_id': chat_id,
                                         'message_id': timerMessage.id,
                                         'nextQuestionNumber': nextQuestionNumber,
-                                        'message': message}
+                                        'message': message,
+                                        'isCompleted': False}
 
     async def sendTimerMessage(self, chat_id, questionTimeLimit):
         message = await self.client.send_message(chat_id, self.formatTime(questionTimeLimit))
@@ -70,8 +59,11 @@ class timerAndQueue:
         if timeLimit < currentTime:
             await self.deleteTimer(user_id, value)
         else:
-            newTimeLeft = timeLimit - currentTime
-            await self.updateTimer(newTimeLeft, chat_id, message_id, value['remindOneMinute'])
+            if value['isCompleted'] == True:
+                pass
+            else:
+                newTimeLeft = timeLimit - currentTime
+                await self.updateTimer(newTimeLeft, chat_id, message_id, value['remindOneMinute'])
         
     async def isTimeToStartVideo(self, user_id, currentTime, timeLimit):
         if timeLimit - self.timerQueue[user_id]['videoTimeLimit'] <  currentTime + 60:
@@ -113,6 +105,7 @@ class timerAndQueue:
             msg = 'You have submitted a practice response. To try again, use `/practice`'
         else:
             msg = f'We have received your response for question {questionNumber}.'
+            self.timerQueue[chats[0]]['isCompleted'] = True
         await self.client.send_message(chat_id, msg, parse_mode='Markdown')
         await self.client.edit_message_text(emoji.emojize(f':check_mark_button: Submitted question {questionNumber}!'), chat_id, message_id)
         del self.timerQueue[chats[0]]

@@ -1,7 +1,7 @@
 import hashlib
 import logging
 
-class acknowledgementHelper:
+class AcknowledgementHelper:
     def __init__(self, client):
         self.client = client
         self.keys = {}
@@ -45,5 +45,5 @@ class acknowledgementHelper:
             logging.info(f"User {user_id} already exists")
         self.names[user_id] = self.keys[hashedKey]['name']
     
-    async def getUserId(self, user_id):
+    async def getName(self, user_id):
         return self.names.get(user_id)
