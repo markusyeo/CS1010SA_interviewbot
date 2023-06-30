@@ -17,7 +17,7 @@ class aclient(AsyncTeleBot):
         telebot.logger.setLevel(logging.DEBUG)
 
     def addTimer(self, timer):
-        self.timerAndQueue = timer
+        self.timerHelper = timer
 
     async def infinity_polling(self, timeout: Optional[int]=20, skip_pending: Optional[bool]=False, request_timeout: Optional[int]=None,
             logger_level: Optional[int]=logging.ERROR, allowed_updates: Optional[List[str]]=None,
@@ -62,7 +62,7 @@ class aclient(AsyncTeleBot):
             while self._polling:
                 try:
                     print('polling')
-                    await self.timerAndQueue.pollQueue()
+                    await self.timerHelper.pollQueue()
                     updates = await self.get_updates(offset=self.offset, allowed_updates=allowed_updates, timeout=timeout, request_timeout=request_timeout)
                     if updates:
                         self.offset = updates[-1].update_id + 1

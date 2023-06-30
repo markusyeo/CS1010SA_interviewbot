@@ -11,7 +11,7 @@ def run_tele_bot(bot: Bot):
 
     @bot.client.message_handler(commands=['poll'])
     async def poll(message):
-        await bot.client.timerAndQueue.pollQueue()
+        await bot.client.timerHelper.pollQueue()
 
     @bot.client.message_handler(commands=['start'])
     async def start_message(message):
@@ -142,7 +142,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
     async def start_practice(message):
         msg = await QuestionHelper.getQuestionMessage(bot.client, message, 'practice')
         await bot.client.reply_to(message, msg, parse_mode = "Markdown")
-        await bot.client.timerAndQueue.mainFunction(message, 'practice')
+        await bot.client.timerHelper.mainFunction(message, 'practice')
 
     # Recurring Practice qeustion
     # I would like a feature where the use is able to practice

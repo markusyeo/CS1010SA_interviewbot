@@ -5,7 +5,7 @@ from env import TOKEN
 from env import FORWARD_CHAT, PRACTICE_LOGS
 import emoji
 from src.client import aclient
-from src.timerAndQueue import timerAndQueue
+from src.timerHelper import TimerHelper
 from src.acknowledgementHelper import AcknowledgementHelper
 from src.questionHelper import QuestionHelper
 
@@ -15,8 +15,8 @@ warningMessage = emoji.emojize('\n\n:spiral_notepad: Ample time has been provide
 class Bot:
     def __init__(self):
         self.client = self.createClient()
-        self.timerAndQueue:timerAndQueue = self.createTimer()
-        self.client.addTimer(self.timerAndQueue)
+        self.timerHelper:TimerHelper = self.createTimer()
+        self.client.addTimer(self.timerHelper)
         self.acknowledgementHelper = AcknowledgementHelper(self.client)
         self.client.add_custom_filter(asyncio_filters.StateFilter(self.client))
 
@@ -34,7 +34,7 @@ class Bot:
             return messageType in ['video']
 
     def createTimer(self):
-        return timerAndQueue(self.client, self)
+        return TimerHelper(self.client, self)
 
     @staticmethod
     def createClient():
@@ -48,7 +48,7 @@ class Bot:
         print('processing question response')
         isVideo = await self.check_message_isVideo(message)
         if isVideo:
-            await self.timerAndQueue.earlyTerminate(message.from_user.id, questionNumber)
+            await self.timerHelper.earlyTerminate(message.from_user.id, questionNumber)
             if questionNumber == 'practice':
                 await self.client.delete_state(message.from_user.id, message.chat.id)
             await self.forwardMessageToLogs(message, questionNumber)
@@ -75,7 +75,7 @@ class Bot:
         msg = await QuestionHelper.getQuestionMessage(self.client, message, questionNumber)
         await self.client.send_message(message.chat.id, msg, parse_mode = "Markdown")
         if questionNumber != 6:
-            await self.client.timerAndQueue.mainFunction(message, questionNumber)
+            await self.client.timerHelper.mainFunction(message, questionNumber)
 
     async def sendAcknowledgeMessage(self, message, name):
         msg = emoji.emojize(f'Thank you for your acknowledgement {name}. Your interview will now begin')
