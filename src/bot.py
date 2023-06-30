@@ -22,8 +22,16 @@ class Bot:
 
     async def check_message_isVideo(self, message):
         messageType = message.content_type
-        print('checking messagetype')
-        return messageType in ['video', 'video_note']
+        print(f'message type is {messageType}')
+        if messageType == 'document':
+            print('checking document type')
+            print(message.document)
+            if message.document.mime_type in ['video/mp4', 'video/quicktime']:
+                return True
+            else:
+                return False
+        else:
+            return messageType in ['video']
 
     def createTimer(self):
         return timerAndQueue(self.client, self)
@@ -37,6 +45,7 @@ class Bot:
         await self.client.reply_to(message, msg, parse_mode = "Markdown")
 
     async def processQuestionResponse(self, message, questionNumber):
+        print('processing question response')
         isVideo = await self.check_message_isVideo(message)
         if isVideo:
             await self.timerAndQueue.earlyTerminate(message.from_user.id, questionNumber)

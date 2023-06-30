@@ -49,30 +49,35 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
     #########################
     ## Interview Questions ##
     #########################
-    @bot.client.message_handler(state=StateHelper.questionState_1, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_1, content_types=['video', 'document'])
     async def questionReply(message):
-        await bot.processQuestionResponse(message, 1)
-        await bot.sendQuestionMessage(message, 2)
+        isVideo = await bot.processQuestionResponse(message, 1)
+        if isVideo:
+            await bot.sendQuestionMessage(message, 2)
 
-    @bot.client.message_handler(state=StateHelper.questionState_2, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_2, content_types=['video', 'document'])
     async def questionReply(message):
-        await bot.processQuestionResponse(message, 2)
-        await bot.sendQuestionMessage(message, 3)
+        isVideo = await bot.processQuestionResponse(message, 2)
+        if isVideo:
+            await bot.sendQuestionMessage(message, 3)
 
-    @bot.client.message_handler(state=StateHelper.questionState_3, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_3, content_types=['video', 'document'])
     async def questionReply(message):
-        await bot.processQuestionResponse(message, 3)
-        await bot.  sendQuestionMessage(message, 4)
+        isVideo = await bot.processQuestionResponse(message, 3)
+        if isVideo:
+            await bot.sendQuestionMessage(message, 4)
 
-    @bot.client.message_handler(state=StateHelper.questionState_4, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_4, content_types=['video', 'document'])
     async def questionReply(message):
-        await bot.processQuestionResponse(message, 4)
-        await bot.sendQuestionMessage(message, 5)
+        isVideo = await bot.processQuestionResponse(message, 4)
+        if isVideo:
+            await bot.sendQuestionMessage(message, 5)
 
-    @bot.client.message_handler(state=StateHelper.questionState_5, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_5, content_types=['video', 'document'])
     async def questionReply(message):
-        await bot.processQuestionResponse(message, 5)
-        await bot.sendQuestionMessage(message, 6)
+        isVideo = await bot.processQuestionResponse(message, 5)
+        if isVideo:
+            await bot.sendQuestionMessage(message, 6)
 
     ##############################################################
     # Haizz just duplicate for now till i find a better solution #
@@ -142,7 +147,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
     # Recurring Practice qeustion
     # I would like a feature where the use is able to practice
     # and get used to the bot before starting the actual interview, this way the user would be comfortable
-    @bot.client.message_handler(state=StateHelper.questionState_practice, content_types=['video'])
+    @bot.client.message_handler(state=StateHelper.questionState_practice, content_types=['video', 'document'])
     async def getQuestionPracticeQuestionReply(message):
         await bot.processQuestionResponse(message, 'practice')
 
