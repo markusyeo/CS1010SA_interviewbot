@@ -153,7 +153,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
 
     # Just duplicating it for non video related due to some funky behaviour
     # of the library
-    @bot.client.message_handler(state=StateHelper.questionState_practice)
+    @bot.client.message_handler(state=StateHelper.questionState_practice, func=lambda x: x.content_type not in ['video'])
     async def getQuestionPracticeQuestionReply(message):
         await bot.processQuestionResponse(message, 'practice')
 

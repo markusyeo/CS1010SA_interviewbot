@@ -43,7 +43,6 @@ class TimerHelper:
         return message
     
     async def pollQueue(self):
-        print(self.timerQueue)
         timerQueue = copy.deepcopy(self.timerQueue)
         for k,v in timerQueue.items():
             await self.checkTime(k, v)

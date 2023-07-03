@@ -61,7 +61,6 @@ class aclient(AsyncTeleBot):
         try:
             while self._polling:
                 try:
-                    print('polling')
                     await self.timerHelper.pollQueue()
                     updates = await self.get_updates(offset=self.offset, allowed_updates=allowed_updates, timeout=timeout, request_timeout=request_timeout)
                     if updates:
