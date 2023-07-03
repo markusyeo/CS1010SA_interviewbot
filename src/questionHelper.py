@@ -1,5 +1,5 @@
 from env import question_1, question_2, question_3, question_4, question_5, question_practice
-from env import question_1_time, question_2_time, question_3_time, question_4_time, question_5_time, question_practice_time
+from env import question_1_time, question_2_time, question_3_time, question_4_time, question_5_time, question_practice_time, interview_over_message
 from env import question_1_video_time, question_2_video_time, question_3_video_time, question_4_video_time, question_5_video_time, question_practice_video_time
 import emoji
 from src.stateHelper import StateHelper
@@ -96,5 +96,5 @@ class QuestionHelper:
     @classmethod
     async def interview_over(cls, client, message):
         await client.set_state(message.from_user.id, StateHelper.questionState_over, message.chat.id)
-        msg = 'Thank you for your time. Your interview is now over.'
+        msg = interview_over_message
         return msg
