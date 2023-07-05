@@ -7,6 +7,7 @@ question_3 = ""
 question_4 = ""
 question_5 = ""
 question_practice = ""
+interview_over_message = ""
 question_1_time = 5
 question_1_video_time = 2
 question_2_time = 5
