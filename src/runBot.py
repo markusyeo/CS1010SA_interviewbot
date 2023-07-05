@@ -4,6 +4,7 @@ import asyncio
 from src.bot import Bot
 from src.questionHelper import QuestionHelper
 from src.stateHelper import StateHelper
+from env import polling_time
 
 warningMessage = emoji.emojize('\n\n:spiral_notepad: Ample time has been provided for you to think through your response, record and upload it. It is your responsibility to submit it on time.')
 
@@ -195,5 +196,5 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
                 msg = emoji.emojize(f'Key ({key}) does not exist')
             await bot.client.send_message(message.chat.id, msg, parse_mode = "Markdown")
 
-    asyncio.run(bot.client.infinity_polling(timeout = 0.1))
+    asyncio.run(bot.client.infinity_polling(timeout = polling_time))
     # asyncio.run(client.run_webhooks(listen='127.0.0.1'))
