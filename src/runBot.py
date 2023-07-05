@@ -171,7 +171,7 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
         listOfKeys = user_input.split('\n')
         for nameAndKey in listOfKeys:
             name, key = nameAndKey.split('/')
-            hashedKey = bot.acknowledgementHelper.generate_keys(name, key)
+            hashedKey = await bot.acknowledgementHelper.generate_keys(name, key)
             if not hashedKey:
                 msg = emoji.emojize(f'Key already exists for {name}, {key}')
             else:
@@ -189,9 +189,9 @@ Type `/acknowledge <Your unique interview code>` to activate your interview sess
         user_input = message.text.split('/delete_key\n')[1]
         listOfKeys = user_input.split('\n')
         for key in listOfKeys:
-            isDeleted = await bot.acknowledgementHelper.delete_key(key)
+            isDeleted, name = await bot.acknowledgementHelper.delete_key(key)
             if isDeleted:
-                msg = emoji.emojize(f'Key ({key}) deleted')
+                msg = emoji.emojize(f'Key ({key}) deleted for {name}')
             else:
                 msg = emoji.emojize(f'Key ({key}) does not exist')
             await bot.client.send_message(message.chat.id, msg, parse_mode = "Markdown")

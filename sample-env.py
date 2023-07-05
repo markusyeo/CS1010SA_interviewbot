@@ -21,3 +21,4 @@ question_5_video_time = 2
 question_practice_time = 3
 question_practice_video_time = 1
 polling_time = 0.5
+keyfilename = 'keyfile.json'
