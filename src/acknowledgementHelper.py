@@ -27,8 +27,8 @@ class AcknowledgementHelper:
     
     async def delete_key(self, key):
         if key in self.keys:
-            del self.keys[key]
             name = self.keys[key]['name']
+            del self.keys[key]
             await self.save_keys()
             return True, name
         else:
@@ -45,6 +45,8 @@ class AcknowledgementHelper:
     
     async def get_keys(self):
         msg = ''
+        if len(self.keys) == 0:
+            return "No keys generated yet"
         for k,v in self.keys.items():
             msg += f"{v['name']}: {k} ({v['acknowledged']})\n"
         return msg
